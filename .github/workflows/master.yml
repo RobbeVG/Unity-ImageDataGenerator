@@ -1,0 +1,48 @@
+name: Actions on the master branch 😎
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build my project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library
+
+      # Test
+      # - name: Run tests
+      #   uses: game-ci/unity-test-runner@v2
+      #   env:
+      #     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      #   with:
+      #     githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Package
+      #- name: Build project
+      #  uses: game-ci/unity-builder@v2
+      #  env:
+      #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      #  with:
+      #    targetPlatform: StandaloneWindows
+
+      # Output
+      #- name: Output package
+      #  uses: actions/upload-artifact@v2.2.3
+      #  with:
+      #    name: Package # Artifact name
+      #    path:  # A file, directory or wildcard pattern that describes what to upload

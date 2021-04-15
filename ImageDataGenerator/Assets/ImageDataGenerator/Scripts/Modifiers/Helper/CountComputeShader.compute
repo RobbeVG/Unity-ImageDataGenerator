@@ -1,0 +1,51 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+int threadGroupsX; //amount 
+float4 colorID;
+uint2 startPosition; //{float x, floaty}
+
+Texture2D<float4> visibilityTex;
+
+//OUTPUT
+RWStructuredBuffer<uint> countsVisibility; // count of every thread;
+
+bool IsSameColor(float4 color, float4 other)
+{
+	if (
+		color.r == other.r &&
+		color.g == other.g &&
+		color.b == other.b &&
+		color.a == other.a
+	   ) return true;
+	return false;
+}
+
+[numthreads(1,1,1)] //iterations
+void CSMain (uint3 id : SV_DispatchThreadID) // {(SV_GroupID * numtreads) + currentGrouptThreadID}
+{	
+	uint xPos = startPosition[0] + (id.x * 16);
+	uint yPos = startPosition[1] + (id.y * 16);
+	
+	uint width, height;
+	visibilityTex.GetDimensions(width, height);
+
+	uint countVis = 0;
+	
+	for(uint yOffset = 0; yOffset < 16; yOffset++)
+	{
+		for(uint xOffset = 0; xOffset < 16; xOffset++)
+		{
+			uint2 positionPixel = { xPos + xOffset, yPos + yOffset };
+			
+			if (positionPixel.x >= width || positionPixel.y >= height)
+				continue;
+			
+			if (IsSameColor(visibilityTex[positionPixel], colorID)) //Check if pixel has colorID -> RENDERED OBJECT WITH OTHER OBJECT POSSIBLY IN FRONT
+				countVis++;
+		}
+	}
+
+	//Set counts of threads on texture
+	countsVisibility[id.x + (id.y * threadGroupsX)] = countVis;
+}
