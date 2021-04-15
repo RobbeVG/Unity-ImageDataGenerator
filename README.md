@@ -8,7 +8,7 @@ E.g. generating datasets for neural networks.
 
 ## Installation
 You can find the asset package [here]() under releases. The unity package is as easy to install as double clicking, opening it with your preferred Unity project and installing it. \
-More information about why I choice an asset package is found in section [other](##Other)
+More information about why I choice an asset package is found in section [other](#other)
 
 ## Features
 
@@ -24,19 +24,19 @@ More information about why I choice an asset package is found in section [other]
 |Profiles|Description|
 |---|---|
 |Normal| Does no modifying only, capturing the current scene |
-|Missing Texture| Changing the material of an [Annotation Object](####main-classes) to null if it is visible enough |
+|Missing Texture| Changing the material of an [Annotation Object](#main-classes) to null if it is visible enough |
 |Aliasing| Capturing the current scene without anti-aliasing |
-|Stretched| Creating a stretched texture of an [Annotation Object](####main-classes) that is visible enough |
+|Stretched| Creating a stretched texture of an [Annotation Object](#main-classes) that is visible enough |
 |Z-Fighting| Creating an duplicate object and rendering both object using an enhance Z-Fighting shader. Will only work if it is visible enough |
 
 #### Current Modifiers:
 |Modifier|Description|
 |---|---|
 |Camera| Changing the camera anti-aliasing level |
-|Material| Changing the material of an [Annotation Object](####main-classes) |
+|Material| Changing the material of an [Annotation Object](#main-classes) |
 |Timer| Waiting until set time has passed |
-|Duplicate| Creating a duplicate of an [Annotation Object](####main-classes) |
-|Visibility| Checking how visible an [Annotation Object](####main-classes) is |
+|Duplicate| Creating a duplicate of an [Annotation Object](#main-classes) |
+|Visibility| Checking how visible an [Annotation Object](#main-classes) is |
 |Manual| Manually taking an annotation of the current status |
 
 ## Usage
