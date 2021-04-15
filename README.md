@@ -21,22 +21,22 @@ More information about why I choice an asset package is found in section [other]
 * **Annotation Modifier** is the base script for all modifiers. This script is derived from a serialized object so you can save your custom modifiers.
 
 #### Current Profiles:
-|Profiles|Descrition|
+|Profiles|Description|
 |---|---|
 |Normal| Does no modifying only, capturing the current scene |
-|Missing Texture| Changing the material of an [Annotation Object](####Main-classes) to null if it is visible enough |
+|Missing Texture| Changing the material of an [Annotation Object](####main-classes) to null if it is visible enough |
 |Aliasing| Capturing the current scene without anti-aliasing |
-|Stretched| Creating a stretched texture of an [Annotation Object](####Main-classes) that is visible enough |
+|Stretched| Creating a stretched texture of an [Annotation Object](####main-classes) that is visible enough |
 |Z-Fighting| Creating an duplicate object and rendering both object using an enhance Z-Fighting shader. Will only work if it is visible enough |
 
 #### Current Modifiers:
-|Modifier|Descrition|
+|Modifier|Description|
 |---|---|
 |Camera| Changing the camera anti-aliasing level |
-|Material| Changing the material of an [Annotation Object](####Main-classes) |
+|Material| Changing the material of an [Annotation Object](####main-classes) |
 |Timer| Waiting until set time has passed |
-|Duplicate| Creating a duplicate of an [Annotation Object](####Main-classes) |
-|Visibility| Checking how visible an [Annotation Object](####Main-classes) is |
+|Duplicate| Creating a duplicate of an [Annotation Object](####main-classes) |
+|Visibility| Checking how visible an [Annotation Object](####main-classes) is |
 |Manual| Manually taking an annotation of the current status |
 
 ## Usage
