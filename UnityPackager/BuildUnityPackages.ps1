@@ -1,8 +1,11 @@
-$runtimeFiles = Get-ChildItem -Path "./Assets/AnnotationSystem/*"  -Recurse -File -Force
+$runtimeFiles = Get-ChildItem -Path "../ImageDataGenerator/Assets/ImageDataGenerator/*"  -Recurse -File -Force
 $runtimeFiles = $runtimeFiles.FullName.Replace("\", "/")
 
-$editorFiles = Get-ChildItem -Path "./Assets/Editor/AnnotationSystem/*.cs" -Recurse -File
+$editorFiles = Get-ChildItem -Path "../ImageDataGenerator/Assets/Editor/ImageDataGenerator/*.cs" -Recurse -File
 $editorFiles = $editorFiles.FullName.Replace("\", "/")
+
+Write-Host $editorFiles.Count
+
 
 # Check if any file contains a space! UnityPackager.exe does not allow spaces in file names
 $allFiles = $runtimeFiles + $editorFiles
@@ -12,7 +15,7 @@ For ($i=0; $i -lt $allFiles.Count; $i++)
     if ($allFiles.Get($i) -match '\s')
     {
       Write-Host $allFiles.Get($i)
-      Write-Error -Message "Error:  : Filename contains a space." -TargetObject $allFiles.Get($i) -Category SyntaxError
+      Write-Error -Message "Error: Filename contains a space." -TargetObject $allFiles.Get($i) -Category SyntaxError
       $checkSuccessful = $false
     }
 }
@@ -20,13 +23,18 @@ For ($i=0; $i -lt $allFiles.Count; $i++)
 if ($checkSuccessful -eq $true)
 {
   $myPath = (Get-Item -Path ".\").FullName;
-  $myPath = $myPath.Replace("\", "/")
 
-  $runtimeBasePath = -join ($myPath, "/Assets/AnnotationSystem/")
-  $editorBasePath = -join ($myPath, "/Assets/Editor/AnnotationSystem/")
+  $destination = Split-Path -Path $myPath -Parent
+
+  $destination = $destination.Replace("\", "/")
+  Write-Host $destination
+
+
+  $runtimeBasePath = -join ($destination, "/ImageDataGenerator/Assets/ImageDataGenerator/")
+  $editorBasePath = -join ($destination, "/ImageDataGenerator/Assets/Editor/ImageDataGenerator/")
 
   $builderPath = -join ($myPath, "/Libraries/UnityPackager/UnityPackager.exe")
-  $packageOutPath = -join ($myPath, "/AnnotationSystem.unitypackage")
+  $packageOutPath = -join ($myPath, "/ImageDataGenerator.unitypackage")
 
   # Args for library and installer generation
   $packageBuildArgs = -join ("null", " ", $packageOutPath, " ")
@@ -36,7 +44,7 @@ if ($checkSuccessful -eq $true)
   For ($i=0; $i -lt $runtimeFiles.Count; $i++)
   {
       Write-Host $runtimeFiles.Get($i).Replace($runtimeBasePath, "")
-      $packageBuildArgs += -join ($runtimeFiles.Get($i), " ", "Assets/AnnotationSystem/", $runtimeFiles.Get($i).Replace($runtimeBasePath, ""), " ")
+      $packageBuildArgs += -join ($runtimeFiles.Get($i), " ", "Assets/ImageDataGenerator/", $runtimeFiles.Get($i).Replace($runtimeBasePath, ""), " ")
   }
   Write-Host "Done adding runtime files" -ForegroundColor green
 
@@ -44,8 +52,8 @@ if ($checkSuccessful -eq $true)
   Write-Host "Adding editor files" -ForegroundColor green
   For ($i=0; $i -lt $editorFiles.Count; $i++)
   {
-      $packageBuildArgs += -join ($editorFiles.Get($i), " ", "Assets/Editor/AnnotationSystem/", $editorFiles.Get($i).Replace($editorBasePath, ""), " ")
-      Write-Host $editorFiles.Get($i)
+      $packageBuildArgs += -join ($editorFiles.Get($i), " ", "Assets/Editor/ImageDataGenerator/", $editorFiles.Get($i).Replace($editorBasePath, ""), " ")
+      Write-Host $editorFiles.Get($i).Replace($runtimeBasePath, "")
   }
   Write-Host "Done adding editor files" -ForegroundColor green
 
