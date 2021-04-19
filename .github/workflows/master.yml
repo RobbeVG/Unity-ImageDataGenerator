@@ -31,22 +31,18 @@ jobs:
       #     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       #   with:
       #     githubToken: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Display the path
-        shell: pwsh
-        run: echo ${env:PATH}
 
       # Package
       - name: Package project 📦
         shell: pwsh
         run: | 
-          ../../UnityPackager/BuildUnityPackages.ps1
+          UnityPackager/BuildUnityPackages.ps1
 
       # Output
       - name: Output package
         uses: actions/upload-artifact@v2.2.3
         with:
           name: ImageDataGenerator Package # Artifact name
-          path:  ..\..\UnityPackager\ImageDataGenerator.unitypackage
+          path: UnityPackager\ImageDataGenerator.unitypackage
           
       
