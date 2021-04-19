@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build my project ✨
+    name: Packaging project ✨
     runs-on: ubuntu-latest
     steps:
       # Checkout
@@ -33,16 +33,16 @@ jobs:
       #     githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Package
-      #- name: Build project
-      #  uses: game-ci/unity-builder@v2
-      #  env:
-      #    UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-      #  with:
-      #    targetPlatform: StandaloneWindows
+      - name: Package project 📦
+        shell: pwsh
+        run: | 
+          ..\..\UnityPackager\BuildUnityPackages.ps1
 
       # Output
-      #- name: Output package
-      #  uses: actions/upload-artifact@v2.2.3
-      #  with:
-      #    name: Package # Artifact name
-      #    path:  # A file, directory or wildcard pattern that describes what to upload
+      - name: Output package
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: ImageDataGenerator Package # Artifact name
+          path:  ..\..\UnityPackager\ImageDataGenerator.unitypackage
+          
+      
