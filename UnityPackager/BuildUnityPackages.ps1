@@ -60,6 +60,4 @@ if ($checkSuccessful -eq $true)
   Start-Process -FilePath $builderPath -ArgumentList $packageBuildArgs
 }
 
-Write-Host "Press any key...."
-while( (-not $Host.UI.RawUI.KeyAvailable) ){}
 exit
