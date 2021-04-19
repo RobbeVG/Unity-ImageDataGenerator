@@ -36,6 +36,8 @@ jobs:
       - name: Package project 📦
         shell: pwsh
         run: | 
+          Get-Location
+          Set-Location -Path UnityPackager/
           UnityPackager/BuildUnityPackages.ps1
 
       # Output
