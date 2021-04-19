@@ -39,7 +39,7 @@ jobs:
           echo "$((Get-Item .).FullName)"
           Set-Location -Path UnityPackager/
           echo "$((Get-Item .).FullName)"
-          BuildUnityPackages.ps1
+          ./BuildUnityPackages.ps1
 
       # Output
       - name: Output package
