@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2.2.3
         with:
           name: ImageDataGenerator Package # Artifact name
-          path: ./UnityPackager/ImageDataGenerator.unitypackage
+          path: UnityPackager/*.unitypackage
           if-no-files-found: error
           
       
