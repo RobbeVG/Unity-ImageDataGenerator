@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CameraModifier", menuName = "AnnotationModifier/Camera")]
+[CreateAssetMenu(fileName = "CameraModifier", menuName = "AnnotationSystem/Modifiers/Camera")]
 public sealed class CameraModifier : AnnotationModifier
 {
     [SerializeField]

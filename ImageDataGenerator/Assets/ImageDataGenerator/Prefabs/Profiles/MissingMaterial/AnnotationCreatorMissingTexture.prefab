@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7469768894307913249
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 517968046976837537, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032491674028110653, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: settingsSelected
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2171272455538545141, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: m_Name
+      value: AnnotationCreatorMissingTexture
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701607491977986998, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: formats.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701607491977986998, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: texts.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701607491977986998, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: texts.Array.data[1]
+      value: _MissingMaterial_
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701607491977986998, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: formats.Array.data[5]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701607491977986998, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: texts.Array.data[5]
+      value: Bug
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: modifiers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: verifiers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: timeScale
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: modifiers.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 2012116a4ca5d2d4bbe5ed145fc366e8, type: 2}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: modifiers.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 2012116a4ca5d2d4bbe5ed145fc366e8, type: 2}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: verifiers.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d6f665528bc58649b0ca31db9f74f20, type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}

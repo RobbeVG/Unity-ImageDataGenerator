@@ -48,25 +48,38 @@ public class AnnotationGenerator : MonoBehaviour
     #region Variables
     [Header("Annotation Settings")]
     [SerializeField]
+    Shader segmentationShader = null;
+    [SerializeField]
     RenderTexture outputTextureTemplate = null;
     [SerializeField]
     private int timeScale = 1;
     [SerializeField]
+    private float timeBetweenAnnotations = 0.1f;
+
+    [SerializeField]
+    private List<AnnotationVerifier> verifiers = new List<AnnotationVerifier>();
+    [SerializeField]
     private List<AnnotationModifier> modifiers = new List<AnnotationModifier>();
 
     //private Variable
-    private List<AnnotationCamera> annotationCameras = new List<AnnotationCamera>();
-    
+    private float currentTimeBetweenAnnotations = 0.0f;
+
     private AnnotationCamera outputCamera = null;
+    private AnnotationCamera segmentationCamera = null;
+
+    private bool isSegmentationRendering = false;
+
+
     private AnnotationExporter annotationExporter = null;
     private AnnotationObjectManager annotationObjectManager = null;
     private Logger annotationLogger = null;
 
     //TODO : USE ENUM FOR THESE THINGS (FLAGS)
     //public Variables
-    public bool QuitExcecution { get; set; } = false;
-    public bool DisableModifiers { get; set; } = false; //Use with caution! Modifiers will not be called anymore!
-    public bool ResetTimeScale { get; set; } = true; // Disable reset time if a modifier needs more time than one update frame
+    public bool StopAnnotation { get; set; } = true; // Disable reset time if a modifier needs more time than one update frame
+
+
+    //TODO REMOVE
 
     bool exportFinished = true;
     #endregion Variables
@@ -74,7 +87,8 @@ public class AnnotationGenerator : MonoBehaviour
     #region Access functions
     public AnnotationExporter Exporter { get { return annotationExporter; } }
     public AnnotationObjectManager ObjectManager { get { return annotationObjectManager; } }
-    public AnnotationCamera OutputCamera { get { return outputCamera; } set { if (value) outputCamera = value; } }
+    public AnnotationCamera OutputCamera { get { return outputCamera; } }
+    public AnnotationCamera SegmentationCamera { get { return segmentationCamera; } }
     public Logger Logger { get { return annotationLogger; } }
     
 
@@ -98,23 +112,14 @@ public class AnnotationGenerator : MonoBehaviour
     /// <param name="prototype">The camera which is attached to a gameObject</param>
     /// <returns>The annotationCamera component if succesfull, otherwise it will return null</returns>
     /// 
-    public AnnotationCamera InstantiateNewCamera(in GameObject prototype, bool autoRender = true)
-    {
-        GameObject connectedCamera = Instantiate(prototype, transform); //-> New instantiated camera 
-        connectedCamera.transform.position = outputCamera.transform.position;
-        connectedCamera.transform.rotation = outputCamera.transform.rotation;
+    //public AnnotationCamera InstantiateSegmentationCamera(in GameObject prototype, bool autoRender = true)
+    //{
+    //    GameObject connectedCamera = Instantiate(prototype, transform); //-> New instantiated camera 
+    //    connectedCamera.transform.position = outputCamera.transform.position;
+    //    connectedCamera.transform.rotation = outputCamera.transform.rotation;
 
-        if (connectedCamera.TryGetComponent(out AnnotationCamera annotationCamera))
-        {
-            if (autoRender)
-                annotationCameras.Add(annotationCamera);
-            return annotationCamera;
-        }
-        
-        //else
-        Destroy(connectedCamera);
-        return null;
-    }
+    //    return null;
+    //}
     /// <summary>
     /// Adds modifier to the list and will set it's generator property. Also will initialize the modifier.
     /// </summary>
@@ -134,6 +139,25 @@ public class AnnotationGenerator : MonoBehaviour
         modifier.Destroy();
         modifiers.Remove(modifier);
     }
+    /// <summary>
+    /// Adds verifier to the list and will set it's generator property. Also will initialize the verifier.
+    /// </summary>
+    /// <param name="verifier">Verifier that needs to be added</param>
+    public void AddVerifier(AnnotationVerifier verifier) 
+    {
+        verifier.Generator = this;
+        verifier.Initialize();
+        verifiers.Add(verifier);
+    }
+    /// <summary>
+    /// Removes verifier to the list. Also will destroy the verifier.
+    /// </summary>
+    /// <param name="verifier">Verifier that needs to be removed</param>
+    public void RemoveVerifier(AnnotationVerifier verifier) 
+    {
+        verifier.Destroy();
+        verifiers.Remove(verifier);
+    }
     #endregion Access functions
 
     private void Awake()
@@ -141,11 +165,29 @@ public class AnnotationGenerator : MonoBehaviour
         outputCamera = GetComponentInChildren<AnnotationCamera>();
         if (!OutputCamera)
             Debug.LogError("No annotation OutputCamera detected... Please add annotation camera as child of the annotation generator");
-        annotationCameras.Add(outputCamera);
         
         if (!outputTextureTemplate)
             Debug.LogError("No outputTextureTemplate found... Please add a Render Texture as template for the annotation generator");
-            
+
+#if UNITY_EDITOR
+        Shader foundSegmentationShader = Shader.Find("Custom/ObjectIDSegmentation");
+#endif
+
+        if (!segmentationShader)
+        {
+#if UNITY_EDITOR
+            if (foundSegmentationShader) 
+            {
+                segmentationShader = foundSegmentationShader;
+                Debug.LogWarning("SegmentationShader empty used: Custom/ObjectIDSegmentation");
+            }
+            else
+                Debug.LogError("No segmentationShader given...");
+#else
+            Debug.LogError("No segmentationShader given...");
+#endif
+        }
+
         // Getting the annotation exporter script
         annotationExporter = GetComponent<AnnotationExporter>();
         if (!annotationExporter)
@@ -166,26 +208,99 @@ public class AnnotationGenerator : MonoBehaviour
         //Needs to be init here because child object not fully initialized
         outputCamera.Component.targetTexture = new RenderTexture(outputTextureTemplate);
 
+        //Instantiate segmentation camera
+        GameObject segmentationGameObject = Instantiate(OutputCamera.gameObject, gameObject.transform);
+        segmentationGameObject.name = "SegmentationCam";
+        segmentationGameObject.transform.position = outputCamera.transform.position;
+        segmentationGameObject.transform.rotation = outputCamera.transform.rotation;
+
+        segmentationCamera = segmentationGameObject.GetComponent<AnnotationCamera>();
+
+        segmentationCamera.Component.clearFlags = CameraClearFlags.SolidColor;
+        segmentationCamera.Component.backgroundColor = Color.clear;
+        segmentationCamera.Component.renderingPath = RenderingPath.Forward;
+        segmentationCamera.Component.allowMSAA = false;
+
+        RenderTextureDescriptor descriptor = OutputCamera.Component.targetTexture.descriptor; //Dimensions
+        descriptor.bindMS = false;
+        descriptor.msaaSamples = 1;
+        segmentationCamera.Component.targetTexture = new RenderTexture(descriptor); //Create new texture  using dimensions of output
+        segmentationCamera.Component.targetTexture.antiAliasing = 1;
+
+        segmentationCamera.Component.SetReplacementShader(segmentationShader, "");
+
         if (modifiers != null)
             foreach (AnnotationModifier modifier in modifiers)
             {
                 modifier.Generator = this;
                 modifier.Initialize();
             }
+
+        if (verifiers != null)
+            foreach (AnnotationVerifier verifier in verifiers)
+            {
+                verifier.Generator = this;
+                verifier.Initialize();
+            }
     }
 
     private void Update()
     {
         Time.timeScale = 0;
+        currentTimeBetweenAnnotations += Time.deltaTime; //Add current delta time -> Could be higher than capture
 
-        if (exportFinished)
-            Annotate();
+        if (exportFinished && currentTimeBetweenAnnotations >= timeBetweenAnnotations) 
+        {
+            //Check if segmentation camera is still rendering
+            if (!isSegmentationRendering)
+                segmentationCamera.Render();
+
+            //Check if segmentation is rendered
+            if (!segmentationCamera.HasRendered)
+            {
+                isSegmentationRendering = true;
+                return;
+            }
+            isSegmentationRendering = false;
+
+            //Check verifiers
+            bool verified = true;
+            if (verifiers.Count == 0)
+            {
+                annotationObjectManager.ModifiableAnnotatedObjects = annotationObjectManager.RenderedObjects[segmentationCamera];
+            }
+            else 
+            {
+                //Check verifying
+                Logger.Log("[VERIFYING]");
+                foreach (AnnotationVerifier verifier in verifiers)
+                {
+                    bool result = verifier.Execute();
+                    verified &= result;
+
+                    if (!result) //Stop running verifiers once there is one negative
+                        break;
+                }
+            }
+            
+            if (verified) 
+            {
+                Annotate();
+
+                foreach (AnnotationVerifier verifier in verifiers)
+                {
+                    verifier.PostAnnotate();
+                }
+
+                currentTimeBetweenAnnotations = 0.0f;
+            }
+        }
 
         //HOW DOES THIS WORK WITH OTHER GENERATORS?
-        if (ResetTimeScale) //Reset the time scale 
+        if (StopAnnotation) //Reset the time scale 
             Time.timeScale = timeScale;
         else
-            ResetTimeScale = true; //For the next frame
+            StopAnnotation = true; //For the next frame
     }
 
     private void OnDestroy()
@@ -194,7 +309,10 @@ public class AnnotationGenerator : MonoBehaviour
         {
             modifier.Destroy();
         }
-        modifiers.Clear();
+        foreach (AnnotationVerifier verifier in verifiers)
+        {
+            verifier.Destroy();
+        }
     }
 
     /// <summary>
@@ -206,28 +324,19 @@ public class AnnotationGenerator : MonoBehaviour
     public void Annotate() 
     {
         Logger.Log("[PRE-ANNOTATE]");
-        if (!DisableModifiers)
-            foreach (AnnotationModifier modifier in modifiers)
-            {
-                modifier.PreAnnotate();
-                if (QuitExcecution) { QuitExcecution = false; return; } 
-                if (DisableModifiers) { break; }
-            }
-
-        Logger.Log("[ANNOTATE]");
-        foreach (AnnotationCamera camera in annotationCameras)
+        foreach (AnnotationModifier modifier in modifiers)
         {
-            camera.Render();
+            modifier.PreAnnotate();
         }
 
+        Logger.Log("[ANNOTATE]");
+        outputCamera.Render();
+
         Logger.Log("[POST-ANNOTATE]");
-        if (!DisableModifiers)
-            foreach (AnnotationModifier modifier in modifiers)
-            {
-                modifier.PostAnnotate();
-                if (QuitExcecution) { QuitExcecution = false; return; }
-                if (DisableModifiers) { break; }
-            }
+        foreach (AnnotationModifier modifier in modifiers)
+        {
+            modifier.PostAnnotate();
+        }
 
         StartCoroutine(AwaitExport());
         exportFinished = false;
@@ -240,18 +349,12 @@ public class AnnotationGenerator : MonoBehaviour
     private IEnumerator AwaitExport() 
     {
         yield return new WaitForEndOfFrame();
-        //Will go over all cameras
-
-        foreach (AnnotationCamera camera in annotationCameras)
+        
+        while (!outputCamera.HasRendered) 
         {
-            while (!camera.HasRendered) 
-            {
-                yield return null; 
-            } //Will wait until camera has rendered
-        }
-
-        //ALL Cameras rendered
-
+            yield return null; 
+        } //Will wait until camera has rendered
+        
         Export();
     }
     /// <summary>
@@ -262,25 +365,19 @@ public class AnnotationGenerator : MonoBehaviour
     private void Export() 
     {
         Logger.Log("[PRE-EXPORT]");
-        if (!DisableModifiers)
-            foreach (AnnotationModifier modifier in modifiers)
-            {
-                modifier.PreExport();
-                if (QuitExcecution) { QuitExcecution = false; return; }
-                if (DisableModifiers) { break; }
-            }
+        foreach (AnnotationModifier modifier in modifiers)
+        {
+            modifier.PreExport();
+        }
         
         Logger.Log("[EXPORT]");
         annotationExporter.Export(outputCamera);
         
         Logger.Log("[POST-EXPORT]");
-        if (!DisableModifiers)
-            foreach (AnnotationModifier distorter in modifiers)
-            {
-                distorter.PostExport();
-                if (QuitExcecution) { QuitExcecution = false; return; }
-                if (DisableModifiers) { break; }
-            }
+        foreach (AnnotationModifier distorter in modifiers)
+        {
+            distorter.PostExport();
+        }
 
         exportFinished = true;
     }

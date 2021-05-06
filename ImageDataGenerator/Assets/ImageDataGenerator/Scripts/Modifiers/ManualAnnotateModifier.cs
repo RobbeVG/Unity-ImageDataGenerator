@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ManualAnnotateModifier", menuName = "AnnotationModifier/Manual annotate")]
+[CreateAssetMenu(fileName = "ManualAnnotateModifier", menuName = "AnnotationSystem/Modifiers/Manual annotate")]
 public sealed class ManualAnnotateModifier : AnnotationModifier
 {
     [System.Flags]
@@ -20,9 +20,8 @@ public sealed class ManualAnnotateModifier : AnnotationModifier
 
     private void CreateAnnotation() 
     {
-        generator.DisableModifiers = true;
-        generator.Annotate();
-        generator.DisableModifiers = false;
+        generator.OutputCamera.Render();
+        generator.Exporter.Export(generator.OutputCamera);
     }
 
     public override void PreAnnotate()

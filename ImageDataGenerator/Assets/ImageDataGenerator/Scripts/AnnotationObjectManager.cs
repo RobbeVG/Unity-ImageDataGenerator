@@ -28,7 +28,9 @@ public class AnnotationObjectManager : MonoBehaviour
 #endif
 
     public HashSet<AnnotationObject> AnnotatedObjects { get; } = new HashSet<AnnotationObject>();
+
     public Dictionary<AnnotationCamera, HashSet<AnnotationObject>> RenderedObjects = new Dictionary<AnnotationCamera, HashSet<AnnotationObject>>();
+
     public HashSet<AnnotationObject> ModifiableAnnotatedObjects { get; set; } = new HashSet<AnnotationObject>();
 
     // Start is called before the first frame update

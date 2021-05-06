@@ -15,7 +15,7 @@ public class AnnotationObject : MonoBehaviour
     //RenderTexture renderTexture;
     #endregion Inspector ReadOnly
 
-    private new Renderer renderer = null;
+    private new Renderer renderer = null; //Same name (new)
     private uint id = 0;
 
     List<AnnotationCamera> previousRendered = new List<AnnotationCamera>();
@@ -54,7 +54,6 @@ public class AnnotationObject : MonoBehaviour
             {
                 callback(annotationCamera, this);
             }
-
     }
 
     private void OnDrawGizmos()

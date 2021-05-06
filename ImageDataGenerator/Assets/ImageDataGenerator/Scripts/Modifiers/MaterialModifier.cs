@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MaterialModifier", menuName = "AnnotationModifier/Material")]
+[CreateAssetMenu(fileName = "MaterialModifier", menuName = "AnnotationSystem/Modifiers/Material")]
 public sealed class MaterialModifier : AnnotationModifier
 {
     delegate Material CreateMaterial(Material mat);
@@ -12,21 +11,11 @@ public sealed class MaterialModifier : AnnotationModifier
         stretchedTexture,
         missingMaterial,
         lowResolutionTexture,
-        ZFightingMaterial
+        RandomColor
     }
 
     [SerializeField]
     Type materlialBugType = Type.missingMaterial;
-
-    [Header("Z-Fighting parameters")]
-    [SerializeField]
-    Shader offsetShader = null;
-    [SerializeField]
-    [Tooltip("The factor parameter scales with the slope of the object in screen space which means you’ll see the offset affected when viewing the object from an angle.")]
-    float factorOffset = 0;
-    [SerializeField]
-    [Tooltip("The units parameter scales with the minimum resolvable depth buffer value meaning as the depth buffer becomes less precise the value will increase preventing z-fighting.")]
-    float unitOffset = 0;
 
     [Header("Modify Textures")]
     [SerializeField]
@@ -34,13 +23,12 @@ public sealed class MaterialModifier : AnnotationModifier
     [SerializeField]
     Vector2 lowRes = new Vector2(200.0f, 200.0f);
 
+
+    Color randomColor = Color.clear;
     Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
 
     protected override void Start()
     {
-        if (materlialBugType == Type.ZFightingMaterial)
-            if (!offsetShader)
-                Debug.LogError("No offset Shader for the ZFighting material");
     }
 
     public override void PreAnnotate()
@@ -59,8 +47,9 @@ public sealed class MaterialModifier : AnnotationModifier
             case Type.lowResolutionTexture:
                 function = CreateLowResMaterial;
                 break;
-            case Type.ZFightingMaterial:
-                function = CreateZFightingMaterial;
+            case Type.RandomColor:
+                function = CreateRandomColorMaterial;
+                randomColor = Random.ColorHSV();
                 break;
             default:
                 function = (Material mat) => { return mat; };
@@ -69,18 +58,19 @@ public sealed class MaterialModifier : AnnotationModifier
 
         foreach (AnnotationObject annotationObject in generator.ObjectManager.ModifiableAnnotatedObjects)
         {
-            Log("Changing material to " + materlialBugType.ToString() + " on: " + annotationObject.gameObject.name);
-            Renderer renderer = annotationObject.GetComponent<Renderer>();
+            Log("Changing material to " + materlialBugType.ToString() + " on: " + annotationObject.gameObject.name  + " " + randomColor.ToString() );
+            Renderer renderer = annotationObject.Renderer;
             if (renderer)
-            {
+            { 
                 originalMaterials.Add(renderer, renderer.materials);
+
                 Material[] newMaterials = new Material[renderer.materials.Length];
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
                     newMaterials[i] = function(renderer.materials[i]);
                     //render.materials[i] = function(renderer.materials[i]); Does not work because the array is copied
                 }
-                renderer.materials = newMaterials;
+                annotationObject.Renderer.materials = newMaterials;
             }
         }
     }
@@ -117,14 +107,10 @@ public sealed class MaterialModifier : AnnotationModifier
         return temp;
     }
 
-    private Material CreateZFightingMaterial(Material mat)
+    private Material CreateRandomColorMaterial(Material mat)
     {
         Material temp = new Material(mat);
-
-        temp.shader = offsetShader;
-        temp.SetFloat("_FactorOffset", factorOffset);
-        temp.SetFloat("_UnitOffset", unitOffset);
-
+        temp.color = Random.ColorHSV();
         return temp;
     }
 }
