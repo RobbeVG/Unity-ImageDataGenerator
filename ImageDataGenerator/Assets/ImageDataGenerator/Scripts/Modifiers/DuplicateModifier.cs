@@ -14,7 +14,13 @@ public sealed class DuplicateModifier : AnnotationModifier
     //}
 
     [SerializeField]
-    bool swapModifiableObjects = true;    
+    bool swapModifiableObjects = true;
+
+    [SerializeField]
+    bool clearColorID = true;
+
+    [SerializeField]
+    bool destroyDuplicate = true;
 
     HashSet<AnnotationObject> objects;
     HashSet<AnnotationObject> originalModifiableObjects;
@@ -32,6 +38,7 @@ public sealed class DuplicateModifier : AnnotationModifier
             Log("Creating a copy of : " + annotationObject.gameObject.name);
 
             AnnotationObject dupedObject = Instantiate(annotationObject, annotationObject.transform.position, annotationObject.transform.rotation);
+            dupedObject.ID = 0;
 
             //if (randomizeColor) 
             //{
@@ -89,11 +96,12 @@ public sealed class DuplicateModifier : AnnotationModifier
 
     public override void PostAnnotate()
     {
-        foreach (AnnotationObject annotationObject in objects)
-        {
-            Log("Destroying copy of : " + annotationObject.gameObject.name);
-            Destroy(annotationObject.gameObject);
-        }
+        if (destroyDuplicate)
+            foreach (AnnotationObject annotationObject in objects)
+            {
+                Log("Destroying copy of : " + annotationObject.gameObject.name);
+                Destroy(annotationObject.gameObject);
+            }
 
         if (swapModifiableObjects)
             generator.ObjectManager.ModifiableAnnotatedObjects = originalModifiableObjects;

@@ -3,7 +3,7 @@
 public abstract class AnnotationVerifier : ScriptableObject
 {
     protected AnnotationGenerator generator = null;
-    public AnnotationGenerator Generator { set { generator = value; } }
+    public AnnotationGenerator Generator { get { return generator; } set { generator = value; } }
 
     protected void Log(string message) { generator.Logger.Log(LogType.Log, GetType().Name + " >> " + message); }
 

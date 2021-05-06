@@ -31,13 +31,16 @@ public sealed class VisibilityVerifier : AnnotationVerifier
     [SerializeField]
     Type stopVisibilityCheckAfter = Type.FirstObject;
     #endregion Inspector
-    #region Private
 
+    #region Private
     //Compute shader variables
     ComputeBuffer pixelCountsVisibility = null;
     int threadGroupsX = 0;
     int threadGroupsY = 0;
     #endregion Private
+
+    //Dictionary<AnnotationObject, uint> ObjectsPixelCount = new Dictionary<AnnotationObject, uint>();
+    public Dictionary<AnnotationObject, uint> ObjectsPixelCount { get; private set; } = new Dictionary<AnnotationObject, uint>();
     #endregion Variables
 
     protected override void Start()
@@ -64,6 +67,7 @@ public sealed class VisibilityVerifier : AnnotationVerifier
 
     public override bool Execute()
     {
+        ObjectsPixelCount.Clear();
         generator.ObjectManager.ModifiableAnnotatedObjects.Clear();
 
         ///SCREEN PROPORTION - FIRST PASS
@@ -84,15 +88,33 @@ public sealed class VisibilityVerifier : AnnotationVerifier
         Log("First Pass of PossibleAnnotationObjects: " + generator.ObjectManager.ModifiableAnnotatedObjects.Count.ToString());
 
         ///CHECK PIXEL PROPORTION ON TEXTURE - SECOND PASS
-        //Setting up second pass
-        HashSet<AnnotationObject> oldModifiableObjects = new HashSet<AnnotationObject>(generator.ObjectManager.ModifiableAnnotatedObjects);
-        generator.ObjectManager.ModifiableAnnotatedObjects.Clear();
-        //Total resolution
+
+        CountPixels(generator.ObjectManager.ModifiableAnnotatedObjects);
+        generator.ObjectManager.ModifiableAnnotatedObjects.Clear(); 
+
         uint resolutionTexture = (uint)generator.SegmentationCamera.Component.targetTexture.width * (uint)generator.SegmentationCamera.Component.targetTexture.height;
+        foreach (KeyValuePair<AnnotationObject, uint> objectAndCount in ObjectsPixelCount)
+        {
+            float visibilityPercentage = (float)objectAndCount.Value / (float)resolutionTexture;
+            if (minimumCoverPercentageOfPixelsOnTexture < visibilityPercentage)
+            {
+                generator.ObjectManager.ModifiableAnnotatedObjects.Add(objectAndCount.Key); //Adding modifiable object
+                if (stopVisibilityCheckAfter == Type.FirstObject) { break; }; //Continue execution?
+            }
+        }
+        Log("Last Pass of PossibleAnnotationObjects: " + generator.ObjectManager.ModifiableAnnotatedObjects.Count.ToString());
+
+        if (generator.ObjectManager.ModifiableAnnotatedObjects.Count == 0)
+            return false;
+        return true;
+    }
+
+    public void CountPixels(HashSet<AnnotationObject> annotationObjects) 
+    {
         //Set data in shader
         int kernelHandle = pixelCountComputeShader.FindKernel("CSMain");
         pixelCountComputeShader.SetTexture(kernelHandle, "visibilityTex", generator.SegmentationCamera.Component.targetTexture);
-        foreach (AnnotationObject annotationObject in oldModifiableObjects)
+        foreach (AnnotationObject annotationObject in annotationObjects)
         {
             pixelCountComputeShader.SetInt("threadGroupsX", threadGroupsX); //Array offset
             pixelCountComputeShader.SetFloats("colorID", annotationObject.IDColor.r, annotationObject.IDColor.g, annotationObject.IDColor.b, annotationObject.IDColor.a);
@@ -106,18 +128,8 @@ public sealed class VisibilityVerifier : AnnotationVerifier
             foreach (uint count in countsVisibility)
                 totalPixelsVisability += count;
 
-            float visibilityPercentage = (float)totalPixelsVisability / (float)resolutionTexture;
-            if (minimumCoverPercentageOfPixelsOnTexture < visibilityPercentage)
-            {
-                generator.ObjectManager.ModifiableAnnotatedObjects.Add(annotationObject); //Adding modifiable object
-                if (stopVisibilityCheckAfter == Type.FirstObject) { break; }; //Continue execution?
-            }
+            ObjectsPixelCount[annotationObject] = totalPixelsVisability;
         }
-        Log("Last Pass of PossibleAnnotationObjects: " + generator.ObjectManager.ModifiableAnnotatedObjects.Count.ToString());
-
-        if (generator.ObjectManager.ModifiableAnnotatedObjects.Count == 0)
-            return false;
-        return true;
     }
 
     public override void Destroy()

@@ -60,6 +60,8 @@ public class AnnotationGenerator : MonoBehaviour
     private List<AnnotationVerifier> verifiers = new List<AnnotationVerifier>();
     [SerializeField]
     private List<AnnotationModifier> modifiers = new List<AnnotationModifier>();
+    [SerializeField]
+    private List<AnnotationVerifier> validators = new List<AnnotationVerifier>();
 
     //private Variable
     private float currentTimeBetweenAnnotations = 0.0f;
@@ -68,18 +70,20 @@ public class AnnotationGenerator : MonoBehaviour
     private AnnotationCamera segmentationCamera = null;
 
     private bool isSegmentationRendering = false;
+    bool validated = true;
 
 
     private AnnotationExporter annotationExporter = null;
     private AnnotationObjectManager annotationObjectManager = null;
     private Logger annotationLogger = null;
 
-    //TODO : USE ENUM FOR THESE THINGS (FLAGS)
-    //public Variables
-    public bool StopAnnotation { get; set; } = true; // Disable reset time if a modifier needs more time than one update frame
 
+
+
+    //public Variables
 
     //TODO REMOVE
+    public bool StopAnnotation { get; set; } = true; 
 
     bool exportFinished = true;
     #endregion Variables
@@ -287,6 +291,10 @@ public class AnnotationGenerator : MonoBehaviour
             {
                 Annotate();
 
+                //TODO DELETE
+                if (!validated)
+                    return;
+
                 foreach (AnnotationVerifier verifier in verifiers)
                 {
                     verifier.PostAnnotate();
@@ -296,11 +304,7 @@ public class AnnotationGenerator : MonoBehaviour
             }
         }
 
-        //HOW DOES THIS WORK WITH OTHER GENERATORS?
-        if (StopAnnotation) //Reset the time scale 
-            Time.timeScale = timeScale;
-        else
-            StopAnnotation = true; //For the next frame
+        Time.timeScale = timeScale;
     }
 
     private void OnDestroy()
@@ -332,14 +336,33 @@ public class AnnotationGenerator : MonoBehaviour
         Logger.Log("[ANNOTATE]");
         outputCamera.Render();
 
+        validated = true;
+        if (validators.Count != 0)
+        {
+            //Check verifying
+            Logger.Log("[VALIDATING]");
+            foreach (AnnotationVerifier verifier in validators)
+            {
+                bool result = verifier.Execute();
+                validated &= result;
+
+                if (!result) //Stop running verifiers once there is one negative
+                    break;
+            }
+        }
+
         Logger.Log("[POST-ANNOTATE]");
         foreach (AnnotationModifier modifier in modifiers)
         {
             modifier.PostAnnotate();
         }
 
-        StartCoroutine(AwaitExport());
-        exportFinished = false;
+        if (validated)
+        {
+            StartCoroutine(AwaitExport());
+            exportFinished = false;
+        }
+        
     }
     /// <summary>
     /// Is a Coroutine that awaits the end of a frame. And checks if every camera was done rendering.
