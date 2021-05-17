@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4404574b227801f448f827284f34eb32, type: 3}
+  m_Name: ZFighting
+  m_EditorClassIdentifier: 
+  conditions:
+  - {fileID: 11400000, guid: f64aa92ddd637d8489fa6afd44636e33, type: 2}
+  - {fileID: 11400000, guid: 9223bcf160f66084cae79530f4fef29b, type: 2}
+  - {fileID: 11400000, guid: 35bb222361a748e48bb308724d46f89b, type: 2}
+  modifiers:
+  - {fileID: 11400000, guid: f8a05e7fd8707054dab3993c0a98c78f, type: 2}
+  - {fileID: 11400000, guid: 34d19162c0559e94b9f08363565b3f94, type: 2}
+  - {fileID: 11400000, guid: eea183cae3a19f742a5e692bbc65d398, type: 2}
+  validators: []
+  output: {fileID: 11400000, guid: 63aa904d6e7ffe548a9b5aa0868ea4d2, type: 2}

@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Security.Permissions;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -21,6 +20,8 @@ public class AnnotationObjectManager : MonoBehaviour
 
     static uint totalIds = 0;
 
+    AnnotationGenerator generator = null;
+
 #if UNITY_EDITOR //DEBUGGING PURPOSES
     [Header("==EDITOR ONLY==")]
     [SerializeField]
@@ -29,13 +30,13 @@ public class AnnotationObjectManager : MonoBehaviour
 
     public HashSet<AnnotationObject> AnnotatedObjects { get; } = new HashSet<AnnotationObject>();
 
-    public Dictionary<AnnotationCamera, HashSet<AnnotationObject>> RenderedObjects = new Dictionary<AnnotationCamera, HashSet<AnnotationObject>>();
-
-    public HashSet<AnnotationObject> ModifiableAnnotatedObjects { get; set; } = new HashSet<AnnotationObject>();
-
     // Start is called before the first frame update
     void Awake()
     {
+        generator = GetComponent<AnnotationGenerator>();
+        if (!generator)
+            Debug.LogError("NO GENERATOR ?!?!?!?!?!?");
+
         switch (settingsSelected)
         {
             case Type.Excluding:
@@ -48,6 +49,8 @@ public class AnnotationObjectManager : MonoBehaviour
                 break;
         }
         selectedObjects.Clear(); //Resets anyway when quits
+
+        enabled = false;
     }
 
     private void OnDestroy() //Clean up previously placed visibility objects
@@ -55,14 +58,6 @@ public class AnnotationObjectManager : MonoBehaviour
         foreach (AnnotationObject visibilityObject in AnnotatedObjects)
         {
             Destroy(visibilityObject);
-        }
-    }
-
-    private void Update()
-    {
-        foreach (KeyValuePair<AnnotationCamera, HashSet<AnnotationObject>> keyValuePair in RenderedObjects)
-        {
-            keyValuePair.Value.Clear();
         }
     }
 
@@ -87,7 +82,7 @@ public class AnnotationObjectManager : MonoBehaviour
 #endif
             }
             //Add callback to this manager
-            annotationObject.renderCallBacks.Add(OnWillRenderAnnotationObject);
+            annotationObject.renderCallBacks.Add(generator.OnSegmentationCamRender);
 
             //Add to annotated objects of this manager
             AnnotatedObjects.Add(annotationObject);
@@ -122,16 +117,5 @@ public class AnnotationObjectManager : MonoBehaviour
             }
         }
         return renderers;
-    }
-
-    private void OnWillRenderAnnotationObject(AnnotationCamera camera, AnnotationObject annotationObject) 
-    {
-        if (!AnnotatedObjects.Contains(annotationObject))
-            return; //Object rendered is not part of this object manager
-
-        if (RenderedObjects.ContainsKey(camera))
-            RenderedObjects[camera].Add(annotationObject);
-        else
-            RenderedObjects.Add(camera, new HashSet<AnnotationObject>() { annotationObject });
     }
 }

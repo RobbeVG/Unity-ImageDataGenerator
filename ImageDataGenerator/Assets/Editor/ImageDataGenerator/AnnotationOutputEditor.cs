@@ -1,10 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 
-[CustomEditor(typeof(AnnotationExporter))]
-public class AnnotationExporterEditor : Editor
+
+[CustomEditor(typeof(AnnotationOutput))]
+public class AnnotationOutputEditor : Editor
 {
     const float padding = 10;
 
@@ -83,13 +84,13 @@ public class AnnotationExporterEditor : Editor
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(outputPath);
-            if (GUILayout.Button("Open folder", GUILayout.Width(100))) 
+            if (GUILayout.Button("Open folder", GUILayout.Width(100)))
             {
                 outputPath.stringValue = EditorUtility.OpenFolderPanel("Select folder to put screen captures in", outputPath.stringValue, "");
             }
             EditorGUILayout.EndHorizontal();
         }
-        else 
+        else
         {
             EditorGUILayout.LabelField("Currently saving annotations at : %AppData%\\LocalLow\\DAER\\DatasetGenerator");
             outputPath.stringValue = "";
@@ -110,29 +111,29 @@ public class AnnotationExporterEditor : Editor
 
         //Display enum
         EditorGUI.PropertyField(new Rect(locationNewField, rect.y, 100, EditorGUIUtility.singleLineHeight), formatEnum, GUIContent.none); locationNewField += 100 + padding;
-        AnnotationExporter.Format formatValue = (AnnotationExporter.Format)formatEnum.enumValueIndex;
+        AnnotationOutput.Format formatValue = (AnnotationOutput.Format)formatEnum.enumValueIndex;
 
         SerializedProperty textPoperty = formatTexts.GetArrayElementAtIndex(index);
 
         //Display different object for different enums
         switch (formatValue)
         {
-            case AnnotationExporter.Format.Text:
+            case AnnotationOutput.Format.Text:
                 EditorGUI.LabelField(new Rect(locationNewField, rect.y, 100, EditorGUIUtility.singleLineHeight), "Written text :"); locationNewField += 100 + padding;
                 textPoperty.stringValue = EditorGUI.TextField(new Rect(locationNewField, rect.y, rect.width - locationNewField + padding, EditorGUIUtility.singleLineHeight), textPoperty.stringValue);
                 break;
 
-            case AnnotationExporter.Format.Date:
+            case AnnotationOutput.Format.Date:
                 drawDateFormat = true;
                 DrawCharField(ref locationNewField, rect, textPoperty, "Date Delimiter :");
                 break;
 
-            case AnnotationExporter.Format.Time:
+            case AnnotationOutput.Format.Time:
                 drawTimeFormat = true;
                 DrawCharField(ref locationNewField, rect, textPoperty, "Time Delimiter :");
                 break;
 
-            case AnnotationExporter.Format.SceneName:
+            case AnnotationOutput.Format.SceneName:
                 EditorGUI.LabelField(new Rect(locationNewField, rect.y, 100, EditorGUIUtility.singleLineHeight), "Current scene :"); locationNewField += 100 + padding;
                 string sceneName = SceneManager.GetActiveScene().name;
                 textPoperty.stringValue = sceneName;

@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: ZFightingDuplicateModifier
   m_EditorClassIdentifier: 
   swapModifiableObjects: 1
+  clearColorID: 1
+  destroyDuplicate: 1

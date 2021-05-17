@@ -12,12 +12,13 @@ public class AnnotationCamera : MonoBehaviour
     // Could be removed.
     // Only tracks if it has rendered.
 
-    private bool hasRendered = false;
     private Camera cameraComponent = null;
+
+    
 
     #region Getters
     public Camera Component { get { return cameraComponent; } }
-    public bool HasRendered { get { return hasRendered; } }
+    public bool FinishedRender { get; private set; } = true;
 
     #endregion Getters
 
@@ -32,14 +33,13 @@ public class AnnotationCamera : MonoBehaviour
 
     public void Render()
     {
-        hasRendered = false;
-
+        FinishedRender = false;
         //Camera's are turned off so needs to be rendered manually
         cameraComponent.Render();
     }
 
     private void OnPostRender()
     {
-        hasRendered = true;
+        FinishedRender = true;
     }
 }

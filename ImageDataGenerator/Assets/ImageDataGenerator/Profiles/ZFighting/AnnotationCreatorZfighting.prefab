@@ -77,10 +77,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: modifiers.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: verifiers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: validators.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: profiles.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
@@ -90,7 +98,7 @@ PrefabInstance:
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: modifiers.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 34d19162c0559e94b9f08363565b3f94, type: 2}
+      objectReference: {fileID: 11400000, guid: eea183cae3a19f742a5e692bbc65d398, type: 2}
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: modifiers.Array.data[2]
       value: 
@@ -98,7 +106,27 @@ PrefabInstance:
     - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: verifiers.Array.data[0]
       value: 
+      objectReference: {fileID: 11400000, guid: f64aa92ddd637d8489fa6afd44636e33, type: 2}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: segmentationShader
+      value: 
+      objectReference: {fileID: 4800000, guid: e7718ed9532529841ad33d192ea5c669, type: 3}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: timeBetweenAnnotations
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: verifiers.Array.data[1]
+      value: 
       objectReference: {fileID: 11400000, guid: f86104c3301df5b448ea7be656aef905, type: 2}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: validators.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 4fa889959f070414d95204e4ec8104bf, type: 2}
+    - target: {fileID: 7151374137090231502, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
+      propertyPath: profiles.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: d8521bec99e0f8e4eae2f056c43e5274, type: 2}
     - target: {fileID: 9009204349251826698, guid: 7110f29c258c2b048a2b6fb8ee8198b2, type: 3}
       propertyPath: near clip plane
       value: 0.01

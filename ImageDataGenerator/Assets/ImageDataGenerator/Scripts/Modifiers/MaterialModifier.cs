@@ -56,7 +56,7 @@ public sealed class MaterialModifier : AnnotationModifier
                 break;
         }
 
-        foreach (AnnotationObject annotationObject in generator.ObjectManager.ModifiableAnnotatedObjects)
+        foreach (AnnotationObject annotationObject in Generator.EditableObjects)
         {
             Log("Changing material to " + materlialBugType.ToString() + " on: " + annotationObject.gameObject.name  + " " + randomColor.ToString() );
             Renderer renderer = annotationObject.Renderer;

@@ -33,12 +33,14 @@ public sealed class DuplicateModifier : AnnotationModifier
 
     public override void PreAnnotate()
     {
-        foreach (AnnotationObject annotationObject in generator.ObjectManager.ModifiableAnnotatedObjects)
+        foreach (AnnotationObject annotationObject in Generator.EditableObjects)
         {
             Log("Creating a copy of : " + annotationObject.gameObject.name);
 
             AnnotationObject dupedObject = Instantiate(annotationObject, annotationObject.transform.position, annotationObject.transform.rotation);
-            dupedObject.ID = 0;
+
+            if (clearColorID)
+                dupedObject.ID = 0;
 
             //if (randomizeColor) 
             //{
@@ -89,8 +91,8 @@ public sealed class DuplicateModifier : AnnotationModifier
         }
         if (swapModifiableObjects) 
         {
-            originalModifiableObjects = generator.ObjectManager.ModifiableAnnotatedObjects;
-            generator.ObjectManager.ModifiableAnnotatedObjects = objects;
+            originalModifiableObjects = Generator.EditableObjects;
+            Generator.EditableObjects = objects;
         }
     }
 
@@ -104,7 +106,7 @@ public sealed class DuplicateModifier : AnnotationModifier
             }
 
         if (swapModifiableObjects)
-            generator.ObjectManager.ModifiableAnnotatedObjects = originalModifiableObjects;
+            Generator.EditableObjects = originalModifiableObjects;
         
         objects.Clear();
     }

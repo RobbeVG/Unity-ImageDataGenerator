@@ -213,7 +213,7 @@ public class GithubAsset
 }
 
 [InitializeOnLoad]
-public class SophiaEditor : EditorWindow
+public class ImageDataGeneratorInstaller : EditorWindow
 {
     private const int COMPATIBLE_ARTIFACT_PATH_VERSION = 2;
     private const string API_URL = "https://api.github.com/repos/xrlabdevelopment/Sophia/releases";
@@ -273,7 +273,7 @@ public class SophiaEditor : EditorWindow
     [MenuItem("Window/ImageDataGeneratorPackage")]
     public static void ShowWindow()
     {
-        GetWindow<SophiaEditor>();
+        GetWindow<ImageDataGeneratorInstaller>();
     }
 
     Vector2 scrollPos = Vector2.zero;

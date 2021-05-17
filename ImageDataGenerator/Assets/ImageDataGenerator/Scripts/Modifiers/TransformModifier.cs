@@ -21,15 +21,9 @@ public class TransformModifier : AnnotationModifier
     [SerializeField]
     private Vector3 displacement = Vector3.zero;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     public override void PreAnnotate()
     {
-        foreach (AnnotationObject annotationObject in generator.ObjectManager.ModifiableAnnotatedObjects)
+        foreach (AnnotationObject annotationObject in Generator.EditableObjects)
         {
             switch (translationType)
             {
@@ -40,11 +34,11 @@ public class TransformModifier : AnnotationModifier
                     annotationObject.transform.Translate(displacement, Space.Self);
                     break;
                 case TranslationSpace.CameraSpace:
-                    annotationObject.transform.Translate(displacement, generator.OutputCamera.transform);
+                    annotationObject.transform.Translate(displacement, Generator.OutputCamera.transform);
                     break;
                 case TranslationSpace.RelativeTowardsCamera:
                     GameObject lookAtGuy = new GameObject("LookAtGuy");
-                    lookAtGuy.transform.position = generator.OutputCamera.transform.position;
+                    lookAtGuy.transform.position = Generator.OutputCamera.transform.position;
                     lookAtGuy.transform.LookAt(annotationObject.Renderer.bounds.center);
 
                     annotationObject.transform.Translate(displacement, lookAtGuy.transform);
@@ -55,5 +49,9 @@ public class TransformModifier : AnnotationModifier
             }
             Log("Translated " + annotationObject.name + " with :" + displacement.ToString("R") + " in space: " + translationType.ToString()); ;
         }
+    }
+
+    public override void PostAnnotate()
+    {
     }
 }
