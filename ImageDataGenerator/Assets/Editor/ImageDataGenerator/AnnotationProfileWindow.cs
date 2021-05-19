@@ -24,6 +24,7 @@ public class AnnotationProfileWindow : EditorWindow
     SerializedProperty annotationValidations;
 
     SerializedProperty outputProperty;
+    SerializedProperty outputCameraProperty;
 
     Vector2 scrollPosition = Vector2.zero;
 
@@ -46,6 +47,7 @@ public class AnnotationProfileWindow : EditorWindow
         SerializedReordebleList(out annotationValidations, out validations, "validators", "Editable validations");
 
         outputProperty = serializedObject.FindProperty("output");
+        outputCameraProperty = serializedObject.FindProperty("cameraObject");
 
         arrowTexture = EditorGUIUtility.FindTexture("Assets/ImageDataGenerator/Textures/Editor/ArrowIcon.png");
         if (!arrowTexture)
@@ -61,9 +63,14 @@ public class AnnotationProfileWindow : EditorWindow
         }
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
+        //EditorGUILayout.TextField()
+
         EditorGUILayout.Space();
 
         EditorGUILayout.PropertyField(outputProperty);
+        EditorGUILayout.PropertyField(outputCameraProperty);
+
+        EditorGUILayout.Space();
 
         conditions.DoLayoutList();
         DrawReordebleListElementsToggleGroup(ref editConditions, "Edit conditions", annotationConditions);

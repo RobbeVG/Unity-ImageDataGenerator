@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719b22ff4cfe11c459e4bca6e126a86d, type: 3}
   m_Name: OverdrawCameraModifier
   m_EditorClassIdentifier: 
-  aliasedRenderTexture: {fileID: 0}
-  properties: 0
-  replacementShader: {fileID: 0}
-  overdrawColor: {r: 1, g: 1, b: 1, a: 1}
+  aliasedRenderTexture: {fileID: 8400000, guid: 3efbd6a21c9e5d543ac58c8b81825bef, type: 2}
+  properties: 1
+  replacementShader: {fileID: 4800000, guid: 7c08ef84353b4124aae7c9faf6266801, type: 3}
+  overdrawColor: {r: 0.26415092, g: 0.14419629, b: 0.033641864, a: 1}

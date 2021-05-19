@@ -8,6 +8,7 @@ public class AnnotationSegmentation : MonoBehaviour
     public AnnotationCamera Camera { get; private set; }
 
     private Dictionary<AnnotationObject, uint> pixelCount = new Dictionary<AnnotationObject, uint>();
+    public IReadOnlyDictionary<AnnotationObject, uint> GetPixelCounts() { return pixelCount; }
 
     [SerializeField]
     private Shader segmentationShader = null;

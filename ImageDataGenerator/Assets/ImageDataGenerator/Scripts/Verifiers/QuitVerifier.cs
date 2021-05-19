@@ -7,6 +7,9 @@ public class QuitVerifier : AnnotationVerifier
     [SerializeField]
     [Tooltip("Amount of annotations until quit")]
     int amountOfAnnotations = 1000;
+    [SerializeField]
+    bool quitApplication = false;
+
 
     int currentAmountOfAnnotations;
 
@@ -19,19 +22,22 @@ public class QuitVerifier : AnnotationVerifier
     {
         if (currentAmountOfAnnotations >= amountOfAnnotations) 
         {
+            if (quitApplication) 
+            {
 #if UNITY_EDITOR
-            // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
-            UnityEditor.EditorApplication.isPlaying = false;
+                // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+                UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+                Application.Quit();
 #endif
-            Log("Stopping application");
+                Log("Stopping application");
+            }
             return false;
         }
         return true;
     }
 
-    public override void PostAnnotate()
+    public override void PostExport()
     {
         currentAmountOfAnnotations++;
     }

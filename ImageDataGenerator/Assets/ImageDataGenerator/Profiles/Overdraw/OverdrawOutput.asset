@@ -14,10 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dateFlag: -1
   timeFlag: -1
-  formats: 0100000002000000
+  formats: 030000000000000001000000000000000200000000000000
   texts:
+  - TestingScene
+  - _Overdraw_
+  - '-'
+  - _
   - 
-  - 
+  - _Bug
   imageOutputFormat: 1
   outputPath: C:/Users/Robbe/AppData/LocalLow/DefaultCompany/ImageDataGenerator\AnnotationCaptures_05-17-21
-    090315
+    091507

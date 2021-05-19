@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4404574b227801f448f827284f34eb32, type: 3}
-  m_Name: OverdrawProfile
+  m_Name: AliasingProfile
   m_EditorClassIdentifier: 
   conditions: []
   modifiers:
-  - {fileID: 11400000, guid: 6c08ef72d985b5b4abe919409e660bbc, type: 2}
+  - {fileID: 11400000, guid: 6a993b2d03ea732449d8f09e83d0645a, type: 2}
   validators: []
-  output: {fileID: 11400000, guid: 38172cfd6fe92c14da703ea2f50819b1, type: 2}
+  cameraOutput: {fileID: 5605716963466622321, guid: f9590e62821927145a3df0dff611752d, type: 3}
+  output: {fileID: 0}

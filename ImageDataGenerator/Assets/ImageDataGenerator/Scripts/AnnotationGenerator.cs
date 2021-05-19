@@ -73,6 +73,7 @@ public class AnnotationGenerator : MonoBehaviour
 
     #region Access Variables
     public AnnotationCamera OutputCamera { get; private set; }
+    public AnnotationCamera StandardCamera { get; private set; }
     public AnnotationSegmentation Segmentation { get; private set; }
     public AnnotationExporter Exporter { get; private set; }
 
@@ -122,10 +123,12 @@ public class AnnotationGenerator : MonoBehaviour
 
     private void Awake()
     {
-        OutputCamera = GetComponentInChildren<AnnotationCamera>();
-        if (!OutputCamera)
+        StandardCamera = GetComponentInChildren<AnnotationCamera>();
+        if (!StandardCamera)
             Debug.LogError("No annotation OutputCamera detected... Please add annotation camera as child of the annotation generator");
-        
+
+        OutputCamera = StandardCamera;
+
         if (!outputTextureTemplate)
             Debug.LogError("No outputTextureTemplate found... Please add a Render Texture as template for the annotation generator");
 
@@ -186,6 +189,8 @@ public class AnnotationGenerator : MonoBehaviour
             //Annotations for each profile
             foreach (AnnotationProfile profile in profiles)
             {
+                OutputCamera = profile.Camera;
+
                 Logger.Log("[CONDITIONING]");
                 if (profile.Conditioning()) 
                 {

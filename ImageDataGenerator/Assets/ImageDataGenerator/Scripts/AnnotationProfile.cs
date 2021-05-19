@@ -17,8 +17,12 @@ public class AnnotationProfile : ScriptableObject
     List<AnnotationModule> annotationModules = new List<AnnotationModule>();
 
     [SerializeField]
+    private GameObject cameraObject = null;
+
+    [SerializeField]
     private AnnotationOutput output = null;
 
+    public AnnotationCamera Camera { get; private set; }
     public AnnotationOutput Output { get { return output; } }
 
     private void OnEnable()
@@ -31,6 +35,20 @@ public class AnnotationProfile : ScriptableObject
 
     public void Initialize(AnnotationGenerator generator) 
     {
+        if (cameraObject)
+        {
+            if (cameraObject.TryGetComponent(out Camera _) && cameraObject.TryGetComponent(out AnnotationCamera _)) 
+            {
+                GameObject newCamera = Instantiate(cameraObject, generator.transform);
+                Camera = newCamera.GetComponent<AnnotationCamera>();
+            }
+            else
+                Debug.LogError("Given camera does not match the requirements");
+        }
+        else
+            Camera = generator.StandardCamera; 
+
+
         foreach (AnnotationModule module in annotationModules)
         {
             module.Initialize(generator);

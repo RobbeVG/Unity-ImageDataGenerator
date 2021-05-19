@@ -1,51 +1,48 @@
-﻿//using System.Collections.Generic;
-//using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 ////TODO DELETE ALLL THIS
-//[CreateAssetMenu(fileName = "ReVisibilityVerifier", menuName = "AnnotationSystem/Verifiers/ReVisibility")]
+[CreateAssetMenu(fileName = "ReVisibilityVerifier", menuName = "AnnotationSystem/Verifiers/ReVisibility")]
 
-//public class ReVisibilityVerifier : AnnotationVerifier
-//{
-//    [SerializeField]
-//    VisibilityVerifier visibility = null;
+public class ReVisibilityVerifier : AnnotationVerifier
+{
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    float minChangeVisibility = 0.3f;
 
-//    [SerializeField]
-//    [Range(0.0f, 1.0f)]
-//    float minBlockage = 0.3f;
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    float maxChangeVisibility = 0.7f;
 
-//    [SerializeField]
-//    [Range(0.0f, 1.0f)]
-//    float maxBlockage = 0.7f;
 
-//    protected override void Start()
-//    {
+    public override bool Execute()
+    {
+        IReadOnlyDictionary<AnnotationObject, uint> pixelCounts = Generator.Segmentation.GetPixelCounts(); //REFERENCE
+        Dictionary<AnnotationObject, uint> originalPixelCounts = new Dictionary<AnnotationObject, uint>();
 
-//        if (!visibility)
-//            Debug.LogError("Visibility not passed");
-//        if (visibility.Generator == null)
-//        {
-//            Debug.LogError("Visibility not initialized");
-//        }
-//    }
+        HashSet<AnnotationObject> originalObjects = new HashSet<AnnotationObject>();
+        foreach (KeyValuePair<AnnotationObject, uint> item in pixelCounts)
+        {
+            originalObjects.Add(item.Key);
+            originalPixelCounts.Add(item.Key, item.Value);
+        }
 
-//    public override bool Execute()
-//    {
-//        Dictionary<AnnotationObject, uint> originalValues = new Dictionary<AnnotationObject, uint>(visibility.ObjectsPixelCount);
-//        HashSet<AnnotationObject> objects = new HashSet<AnnotationObject>(originalValues.Keys);
+        Generator.Segmentation.Camera.Render();
+        Generator.Segmentation.Run();
 
-//        visibility.Generator.SegmentationCamera.Render();
-//        visibility.CountPixels(objects);
+        foreach (AnnotationObject annotationObject in originalObjects)
+        {
+            if (originalPixelCounts[annotationObject] == 0)
+                continue;
 
-//        foreach (AnnotationObject bject in objects)
-//        {
-//            float amountOfBlockage = 1.0f - ((float)visibility.ObjectsPixelCount[bject] / (float)originalValues[bject]);
-//            if (minBlockage < amountOfBlockage)
-//                if (maxBlockage > amountOfBlockage)
-//                    return true;
+            float visibilityPercentage = (float)pixelCounts[annotationObject] / (float)originalPixelCounts[annotationObject];
 
-//            Debug.LogWarning("Still visible of original object " + amountOfBlockage);
-//        }
+            Log(annotationObject.name + " is visible with blocked by: " + visibilityPercentage.ToString());
 
-//        return false;
-//    }
-//}
+            if (minChangeVisibility < visibilityPercentage)
+                if (maxChangeVisibility > visibilityPercentage)
+                    return true;
+        }
+        return false;
+    }
+}
